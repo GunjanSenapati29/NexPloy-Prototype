@@ -1,37 +1,59 @@
 import Link from "next/link";
-import { Building2, MapPin, IndianRupee, Calendar } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { MapPin, IndianRupee, Calendar, Users, ShieldCheck, ShieldX } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { DepthCard } from "@/components/intelligence/DepthCard";
+import { AnimatedMetric } from "@/components/intelligence/AnimatedMetric";
+import { cn } from "@/lib/utils";
+import { applicationStatusLabel, applicationStatusTone, driveStatusTone } from "@/lib/status";
 import type { Drive, ApplicationStatus } from "@/types";
 
-const statusVariant: Record<ApplicationStatus, "success" | "default" | "warning" | "muted" | "risk"> = {
-  eligible: "success",
-  applied: "default",
-  shortlisted: "default",
-  interview: "warning",
-  offer: "success",
-  joined: "success",
-  rejected: "risk",
-};
+const HIGH_MATCH_THRESHOLD = 85;
 
-export function DriveCard({ drive, matchPct, status }: { drive: Drive; matchPct?: number; status?: ApplicationStatus }) {
+export function DriveCard({
+  drive,
+  matchPct,
+  status,
+  eligible,
+}: {
+  drive: Drive;
+  matchPct?: number;
+  status?: ApplicationStatus;
+  /** Deterministic verdict from src/lib/eligibility.ts — never inferred here. */
+  eligible: boolean;
+}) {
+  const highMatch = matchPct !== undefined && matchPct >= HIGH_MATCH_THRESHOLD;
+
   return (
-    <Link href={`/student/drives/${drive.id}`}>
-      <Card className="h-full p-5 transition-all hover:-translate-y-0.5 hover:border-violet/40 hover:shadow-glow">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-violet/10 text-sm font-bold text-violet-bright">
+    <Link href={`/student/drives/${drive.id}`} className="block h-full">
+      <DepthCard className={cn("h-full p-5", highMatch && "border-violet/40 shadow-glow")}>
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-violet/10 text-sm font-bold text-violet-bright">
               {drive.logoInitial}
             </div>
-            <div>
-              <p className="text-sm font-semibold">{drive.companyName}</p>
-              <p className="text-xs text-muted-foreground">{drive.role}</p>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold">{drive.companyName}</p>
+              <p className="truncate text-xs text-muted-foreground">{drive.role}</p>
             </div>
           </div>
-          {matchPct !== undefined && <span className="text-lg font-semibold text-violet-bright tabular-nums">{matchPct}%</span>}
+          {matchPct !== undefined && (
+            <span
+              className={cn(
+                "shrink-0 text-lg font-semibold tabular-nums",
+                highMatch ? "text-violet-bright" : "text-foreground",
+              )}
+            >
+              <AnimatedMetric value={matchPct} suffix="%" />
+            </span>
+          )}
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-1.5">
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          <Badge variant={driveStatusTone[drive.status]}>{drive.status}</Badge>
+          <Badge variant="outline">{drive.driveType}</Badge>
+        </div>
+
+        <div className="mt-3 flex flex-wrap gap-1.5">
           {drive.requiredSkills.slice(0, 4).map((s) => (
             <Badge key={s} variant="muted">
               {s}
@@ -47,19 +69,24 @@ export function DriveCard({ drive, matchPct, status }: { drive: Drive; matchPct?
             <IndianRupee className="h-3 w-3" /> {drive.package}
           </div>
           <div className="flex items-center gap-1.5">
-            <Calendar className="h-3 w-3" /> Deadline {drive.deadline}
+            <Calendar className="h-3 w-3" /> Apply by {drive.deadline}
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Users className="h-3 w-3" /> {drive.expectedHiring} expected hires
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between">
-          {status ? (
-            <Badge variant={statusVariant[status]}>{status.toUpperCase()}</Badge>
+        <div className="mt-4 flex items-center justify-between gap-2">
+          {status && status !== "eligible" ? (
+            <Badge variant={applicationStatusTone[status]}>{applicationStatusLabel[status]}</Badge>
           ) : (
-            <Badge variant={drive.eligibilityResult === "ELIGIBLE" ? "success" : "risk"}>{drive.eligibilityResult}</Badge>
+            <Badge variant={eligible ? "success" : "risk"} className="gap-1">
+              {eligible ? <ShieldCheck className="h-3 w-3" /> : <ShieldX className="h-3 w-3" />}
+              {eligible ? "ELIGIBLE" : "NOT ELIGIBLE"}
+            </Badge>
           )}
-          <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
         </div>
-      </Card>
+      </DepthCard>
     </Link>
   );
 }

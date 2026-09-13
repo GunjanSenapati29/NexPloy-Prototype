@@ -5,6 +5,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ToastBridge } from "@/components/layout/ToastBridge";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { MotionProvider } from "@/components/providers/MotionProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -19,7 +20,7 @@ const geistMono = localFont({
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "NEXPLOY — Intelligence Before Opportunity",
+  title: "NEXPLOY — From Potential to Placement",
   description:
     "NEXPLOY is an AI-powered placement intelligence platform prototype — an interactive demo of student readiness intelligence, explainable candidate matching, and campus placement orchestration.",
 };
@@ -32,11 +33,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} font-sans antialiased`}>
-        <TooltipProvider delayDuration={200}>
-          {children}
-          <ToastBridge />
-          <Toaster />
-        </TooltipProvider>
+        <MotionProvider>
+          <TooltipProvider delayDuration={200}>
+            {children}
+            <ToastBridge />
+            <Toaster />
+          </TooltipProvider>
+        </MotionProvider>
       </body>
     </html>
   );

@@ -1,0 +1,283 @@
+import type { InterviewSlot } from "@/types";
+
+// Assessment + interview schedule for the current drive week. Shared by
+// the student Assessments page, the recruiter Interview Scheduling page
+// and the officer Interviews page.
+export const interviewSlots: InterviewSlot[] = [
+  {
+    id: "iv_rahul_tn_oa",
+    studentId: "stu_rahul",
+    driveId: "drv_technova",
+    companyName: "TechNova",
+    round: "Online Assessment",
+    date: "8 Sep 2026",
+    time: "10:00 AM",
+    mode: "Virtual",
+    venue: "Online proctored",
+    panel: "Automated",
+    status: "COMPLETED",
+    result: "CLEARED",
+  },
+  {
+    id: "iv_rahul_tn_t1",
+    studentId: "stu_rahul",
+    driveId: "drv_technova",
+    companyName: "TechNova",
+    round: "Technical Interview 1",
+    date: "22 Sep 2026",
+    time: "10:30 AM",
+    mode: "In-Person",
+    venue: "Lab 2",
+    panel: "Panel A — Dr. Anita Mishra, R. Iyer",
+    status: "SCHEDULED",
+    result: "AWAITED",
+  },
+  {
+    id: "iv_rahul_cs_t1",
+    studentId: "stu_rahul",
+    driveId: "drv_cloudsphere",
+    companyName: "CloudSphere",
+    round: "Technical Interview",
+    date: "22 Sep 2026",
+    time: "2:30 PM",
+    mode: "In-Person",
+    venue: "Lab 3",
+    panel: "Panel C — Prof. Rajesh Nair",
+    status: "SCHEDULED",
+    result: "AWAITED",
+  },
+  {
+    id: "iv_rahul_is_oa",
+    studentId: "stu_rahul",
+    driveId: "drv_innosoft",
+    companyName: "InnoSoft",
+    round: "Online Assessment",
+    date: "28 Sep 2026",
+    time: "11:00 AM",
+    mode: "Virtual",
+    venue: "Online proctored",
+    panel: "Automated",
+    status: "SCHEDULED",
+    result: "AWAITED",
+  },
+  {
+    id: "iv_priya_tn_t1",
+    studentId: "stu_priya",
+    driveId: "drv_technova",
+    companyName: "TechNova",
+    round: "Technical Interview 1",
+    date: "22 Sep 2026",
+    time: "11:15 AM",
+    mode: "In-Person",
+    venue: "Lab 2",
+    panel: "Panel A — Dr. Anita Mishra, R. Iyer",
+    status: "SCHEDULED",
+    result: "AWAITED",
+  },
+  {
+    id: "iv_arjun_tn_oa",
+    studentId: "stu_arjun",
+    driveId: "drv_technova",
+    companyName: "TechNova",
+    round: "Online Assessment",
+    date: "19 Sep 2026",
+    time: "10:00 AM",
+    mode: "Virtual",
+    venue: "Online proctored",
+    panel: "Automated",
+    status: "SCHEDULED",
+    result: "AWAITED",
+  },
+  {
+    id: "iv_kavya_tn_hr",
+    studentId: "stu_kavya",
+    driveId: "drv_technova",
+    companyName: "TechNova",
+    round: "HR Interview",
+    date: "16 Sep 2026",
+    time: "3:00 PM",
+    mode: "Virtual",
+    venue: "Video call",
+    panel: "Panel B — TechNova HR",
+    status: "COMPLETED",
+    result: "CLEARED",
+  },
+  {
+    id: "iv_kavya_qf_hm",
+    studentId: "stu_kavya",
+    driveId: "drv_quantflow",
+    companyName: "QuantFlow",
+    round: "Hiring Manager Round",
+    date: "2 Sep 2026",
+    time: "4:00 PM",
+    mode: "Virtual",
+    venue: "Video call",
+    panel: "QuantFlow Engineering",
+    status: "COMPLETED",
+    result: "CLEARED",
+  },
+  {
+    id: "iv_sneha_ms_t1",
+    studentId: "stu_sneha",
+    driveId: "drv_medisys",
+    companyName: "MediSys",
+    round: "Technical Interview",
+    date: "30 Sep 2026",
+    time: "11:30 AM",
+    mode: "In-Person",
+    venue: "Lab 3",
+    panel: "Panel D — MediSys Firmware",
+    status: "SCHEDULED",
+    result: "AWAITED",
+  },
+  {
+    id: "iv_sneha_dv_case",
+    studentId: "stu_sneha",
+    driveId: "drv_datavision",
+    companyName: "DataVision",
+    round: "Case Study Round",
+    date: "12 Aug 2026",
+    time: "10:30 AM",
+    mode: "In-Person",
+    venue: "Seminar Hall A",
+    panel: "Panel B — DataVision Analytics",
+    status: "COMPLETED",
+    result: "NOT CLEARED",
+  },
+  {
+    id: "iv_isha_fe_video",
+    studentId: "stu_isha",
+    driveId: "drv_finedge",
+    companyName: "FinEdge",
+    round: "Video Interview",
+    date: "4 Oct 2026",
+    time: "2:00 PM",
+    mode: "Virtual",
+    venue: "Video call",
+    panel: "FinEdge Risk",
+    status: "SCHEDULED",
+    result: "AWAITED",
+  },
+  {
+    id: "iv_meera_bl_t1",
+    studentId: "stu_meera",
+    driveId: "drv_brightlearn",
+    companyName: "BrightLearn",
+    round: "Technical Interview",
+    date: "8 Oct 2026",
+    time: "10:00 AM",
+    mode: "In-Person",
+    venue: "Auditorium",
+    panel: "BrightLearn Platform",
+    status: "SCHEDULED",
+    result: "AWAITED",
+  },
+  {
+    id: "iv_neha_tn_oa",
+    studentId: "stu_neha",
+    driveId: "drv_technova",
+    companyName: "TechNova",
+    round: "Online Assessment",
+    date: "19 Sep 2026",
+    time: "10:00 AM",
+    mode: "Virtual",
+    venue: "Online proctored",
+    panel: "Automated",
+    status: "SCHEDULED",
+    result: "AWAITED",
+  },
+  {
+    id: "iv_ankit_tn_oa",
+    studentId: "stu_ankit",
+    driveId: "drv_technova",
+    companyName: "TechNova",
+    round: "Online Assessment",
+    date: "19 Sep 2026",
+    time: "10:00 AM",
+    mode: "Virtual",
+    venue: "Online proctored",
+    panel: "Automated",
+    status: "SCHEDULED",
+    result: "AWAITED",
+  },
+];
+
+export const getInterviewsByStudent = (studentId: string): InterviewSlot[] =>
+  interviewSlots.filter((i) => i.studentId === studentId);
+
+export const getInterviewsByDrive = (driveId: string): InterviewSlot[] =>
+  interviewSlots.filter((i) => i.driveId === driveId);
+
+export const upcomingInterviews = interviewSlots.filter((i) => i.status === "SCHEDULED");
+
+// ---- Interview preparation (prototype content) ----------------------
+
+export interface InterviewPrepPlan {
+  driveId: string;
+  companyName: string;
+  role: string;
+  preparationScore: number;
+  technicalTopics: { topic: string; coverage: number }[];
+  behaviouralTopics: string[];
+  likelyQuestions: string[];
+}
+
+export const interviewPrepPlans: InterviewPrepPlan[] = [
+  {
+    driveId: "drv_technova",
+    companyName: "TechNova",
+    role: "Backend Developer",
+    preparationScore: 64,
+    technicalTopics: [
+      { topic: "Java", coverage: 82 },
+      { topic: "Spring Boot", coverage: 78 },
+      { topic: "SQL", coverage: 80 },
+      { topic: "REST", coverage: 76 },
+      { topic: "OOP", coverage: 84 },
+      { topic: "DSA", coverage: 61 },
+      { topic: "Docker", coverage: 25 },
+      { topic: "AWS", coverage: 12 },
+    ],
+    behaviouralTopics: [
+      "Walk through a project you owned end to end",
+      "A time you debugged something under pressure",
+      "How you handle disagreement in a team",
+      "Why backend engineering, and why TechNova",
+    ],
+    likelyQuestions: [
+      "Explain the Spring Boot request lifecycle from filter to controller.",
+      "How would you make a payment endpoint idempotent?",
+      "Difference between a clustered and non-clustered index, with an example.",
+      "Design a rate limiter for an API gateway.",
+      "How would you containerize your Campus Payments API?",
+      "Explain HashMap internals and its resize behaviour.",
+    ],
+  },
+  {
+    driveId: "drv_cloudsphere",
+    companyName: "CloudSphere",
+    role: "Cloud Engineer",
+    preparationScore: 38,
+    technicalTopics: [
+      { topic: "Linux", coverage: 45 },
+      { topic: "Python", coverage: 52 },
+      { topic: "Docker", coverage: 25 },
+      { topic: "Kubernetes", coverage: 10 },
+      { topic: "AWS", coverage: 12 },
+      { topic: "Networking", coverage: 40 },
+    ],
+    behaviouralTopics: [
+      "How you learn an unfamiliar technology quickly",
+      "A time you automated something repetitive",
+    ],
+    likelyQuestions: [
+      "What happens when you run docker run on an image you do not have locally?",
+      "Explain the difference between a container and a virtual machine.",
+      "What is an IAM role and when would you use one instead of a user?",
+      "How would you debug a service that is unreachable inside a cluster?",
+    ],
+  },
+];
+
+export const getPrepPlan = (driveId: string): InterviewPrepPlan | undefined =>
+  interviewPrepPlans.find((p) => p.driveId === driveId);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { Sparkles, CornerDownLeft, User } from "lucide-react";
 import { CommandDialog } from "@/components/ui/command";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -95,7 +96,13 @@ export function CopilotPalette() {
           <ScrollArea className="max-h-80">
             <div className="space-y-3 px-1 py-1">
               {messages.map((m) => (
-                <div key={m.id} className={cn("flex gap-2.5", m.role === "user" && "justify-end")}>
+                <motion.div
+                  key={m.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className={cn("flex gap-2.5", m.role === "user" && "justify-end")}
+                >
                   {m.role === "assistant" && (
                     <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet/15">
                       <Sparkles className="h-3 w-3 text-violet-bright" />
@@ -116,7 +123,7 @@ export function CopilotPalette() {
                       <User className="h-3 w-3 text-muted-foreground" />
                     </div>
                   )}
-                </div>
+                </motion.div>
               ))}
               {thinking && (
                 <div className="flex items-center gap-2.5">

@@ -1,9 +1,17 @@
 import type { CandidateMatch } from "@/types";
 
-// Explainable match breakdowns. Labeled everywhere in the UI as mocked
-// prototype intelligence — production will replace this with a real
+// ============================================================
+// Explainable match breakdowns — labeled everywhere in the UI as mocked
+// prototype intelligence. Production will replace this with a real
 // matching pipeline over the same MatchBreakdown shape.
+//
+// IMPORTANT: `breakdown.eligibility` is a *contribution weight*, not the
+// eligibility verdict. The verdict comes from src/lib/eligibility.ts.
+// A candidate can score highly here and still be NOT ELIGIBLE.
+// ============================================================
+
 export const matches: CandidateMatch[] = [
+  // ---- TechNova — Backend Developer (the featured drive) -------------
   {
     id: "match_rahul_technova",
     studentId: "stu_rahul",
@@ -20,39 +28,78 @@ export const matches: CandidateMatch[] = [
     },
     whySelected: [
       "Strong Java / Spring Boot alignment with the role's core stack",
-      "Strong academic record (8.4 CGPA)",
+      "Strong academic record (8.59 CGPA)",
       "Relevant backend projects demonstrating REST API design",
     ],
-    weakOrMissing: ["Docker", "Cloud deployment experience"],
-    recommendation: "Strong shortlist candidate.",
+    weakOrMissing: ["Docker", "AWS / cloud deployment experience"],
+    recommendation: "STRONG MATCH",
   },
   {
     id: "match_priya_technova",
     studentId: "stu_priya",
     driveId: "drv_technova",
-    overallFit: 88,
+    overallFit: 87,
     breakdown: {
       eligibility: 100,
-      skills: 86,
-      semanticMatch: 84,
+      skills: 84,
+      semanticMatch: 83,
       projects: 88,
       interview: 82,
       readiness: 85,
       academics: 92,
     },
     whySelected: [
-      "Excellent academic record (8.9 CGPA)",
+      "Excellent academic record (8.92 CGPA)",
       "Strong system design fundamentals",
       "Consistent interview performance history",
     ],
-    weakOrMissing: ["Java depth slightly behind Spring specialists"],
-    recommendation: "Strong shortlist candidate.",
+    weakOrMissing: ["Java depth is behind the Spring specialists in this pool"],
+    recommendation: "STRONG MATCH",
+  },
+  {
+    id: "match_kavya_technova",
+    studentId: "stu_kavya",
+    driveId: "drv_technova",
+    overallFit: 85,
+    breakdown: {
+      eligibility: 100,
+      skills: 74,
+      semanticMatch: 72,
+      projects: 87,
+      interview: 86,
+      readiness: 88,
+      academics: 94,
+    },
+    whySelected: [
+      "Outstanding algorithmic and systems depth",
+      "Highest academic record in the pool (9.12 CGPA)",
+    ],
+    weakOrMissing: ["Primary stack is C++/Go, not Java/Spring Boot"],
+    recommendation: "CONSIDER — strong engineer, stack mismatch",
+  },
+  {
+    id: "match_arjun_technova",
+    studentId: "stu_arjun",
+    driveId: "drv_technova",
+    overallFit: 83,
+    breakdown: {
+      eligibility: 100,
+      skills: 85,
+      semanticMatch: 81,
+      projects: 82,
+      interview: 75,
+      readiness: 81,
+      academics: 84,
+    },
+    whySelected: ["Java + Kafka event-streaming experience", "Solid SQL fundamentals"],
+    weakOrMissing: ["AWS", "System design depth"],
+    recommendation: "CONSIDER FOR SHORTLIST",
   },
   {
     id: "match_ankit_technova",
     studentId: "stu_ankit",
     driveId: "drv_technova",
-    overallFit: 84,
+    overallFit: 81,
     breakdown: {
       eligibility: 100,
       skills: 83,
@@ -64,13 +111,13 @@ export const matches: CandidateMatch[] = [
     },
     whySelected: ["Solid Java + Microservices exposure", "Good SQL fundamentals"],
     weakOrMissing: ["AWS", "System design depth"],
-    recommendation: "Consider for shortlist.",
+    recommendation: "CONSIDER FOR SHORTLIST",
   },
   {
     id: "match_neha_technova",
     studentId: "stu_neha",
     driveId: "drv_technova",
-    overallFit: 82,
+    overallFit: 79,
     breakdown: {
       eligibility: 100,
       skills: 80,
@@ -82,7 +129,209 @@ export const matches: CandidateMatch[] = [
     },
     whySelected: ["Relevant Spring Boot + REST API project experience"],
     weakOrMissing: ["Docker", "System design", "Interview conversion"],
-    recommendation: "Consider for shortlist.",
+    recommendation: "CONSIDER FOR SHORTLIST",
+  },
+
+  // ---- Other drives Rahul is matched against -------------------------
+  {
+    id: "match_rahul_cloudsphere",
+    studentId: "stu_rahul",
+    driveId: "drv_cloudsphere",
+    overallFit: 74,
+    breakdown: {
+      eligibility: 100,
+      skills: 62,
+      semanticMatch: 68,
+      projects: 74,
+      interview: 78,
+      readiness: 82,
+      academics: 88,
+    },
+    whySelected: ["Strong Linux and backend fundamentals", "Strong academics"],
+    weakOrMissing: ["AWS", "Docker", "Kubernetes"],
+    recommendation: "MODERATE MATCH — close the cloud gaps first",
+  },
+  {
+    id: "match_rahul_innosoft",
+    studentId: "stu_rahul",
+    driveId: "drv_innosoft",
+    overallFit: 80,
+    breakdown: {
+      eligibility: 100,
+      skills: 74,
+      semanticMatch: 76,
+      projects: 84,
+      interview: 78,
+      readiness: 82,
+      academics: 88,
+    },
+    whySelected: ["Full-stack project experience with Node.js and SQL", "Strong academics"],
+    weakOrMissing: ["React depth", "TypeScript"],
+    recommendation: "GOOD MATCH",
+  },
+  {
+    id: "match_rahul_datavision",
+    studentId: "stu_rahul",
+    driveId: "drv_datavision",
+    overallFit: 68,
+    breakdown: {
+      eligibility: 100,
+      skills: 61,
+      semanticMatch: 58,
+      projects: 64,
+      interview: 78,
+      readiness: 82,
+      academics: 88,
+    },
+    whySelected: ["Strong SQL fundamentals", "Strong academics"],
+    weakOrMissing: ["Statistics", "Data visualization", "Python analytics stack"],
+    recommendation: "MODERATE MATCH — outside primary target role",
+  },
+  {
+    id: "match_rahul_quantflow",
+    studentId: "stu_rahul",
+    driveId: "drv_quantflow",
+    overallFit: 63,
+    breakdown: {
+      eligibility: 100,
+      skills: 52,
+      semanticMatch: 54,
+      projects: 66,
+      interview: 78,
+      readiness: 82,
+      academics: 88,
+    },
+    whySelected: ["Strong academics clears a demanding bar", "Good problem-solving signal"],
+    weakOrMissing: ["C++", "Go", "Low-latency systems experience"],
+    recommendation: "STRETCH MATCH",
+  },
+
+  // ---- Pools for other drives ----------------------------------------
+  {
+    id: "match_kavya_quantflow",
+    studentId: "stu_kavya",
+    driveId: "drv_quantflow",
+    overallFit: 94,
+    breakdown: {
+      eligibility: 100,
+      skills: 93,
+      semanticMatch: 92,
+      projects: 95,
+      interview: 86,
+      readiness: 88,
+      academics: 94,
+    },
+    whySelected: ["Raft-backed KV store in Go", "Exceptional algorithmic depth", "9.12 CGPA"],
+    weakOrMissing: ["Limited production C++ exposure"],
+    recommendation: "STRONG MATCH",
+  },
+  {
+    id: "match_priya_cloudsphere",
+    studentId: "stu_priya",
+    driveId: "drv_cloudsphere",
+    overallFit: 88,
+    breakdown: {
+      eligibility: 100,
+      skills: 87,
+      semanticMatch: 86,
+      projects: 88,
+      interview: 82,
+      readiness: 85,
+      academics: 92,
+    },
+    whySelected: ["AWS Cloud Practitioner certified", "Python + Airflow pipeline experience"],
+    weakOrMissing: ["Kubernetes"],
+    recommendation: "STRONG MATCH",
+  },
+  {
+    id: "match_sneha_medisys",
+    studentId: "stu_sneha",
+    driveId: "drv_medisys",
+    overallFit: 71,
+    breakdown: {
+      eligibility: 100,
+      skills: 76,
+      semanticMatch: 74,
+      projects: 68,
+      interview: 28,
+      readiness: 51,
+      academics: 68,
+    },
+    whySelected: ["Embedded C and ESP32 telemetry project", "Directly relevant domain interest"],
+    weakOrMissing: ["Interview performance", "Communication"],
+    recommendation: "CONSIDER — strong domain fit, interview coaching needed",
+  },
+  {
+    id: "match_isha_finedge",
+    studentId: "stu_isha",
+    driveId: "drv_finedge",
+    overallFit: 82,
+    breakdown: {
+      eligibility: 100,
+      skills: 80,
+      semanticMatch: 79,
+      projects: 76,
+      interview: 72,
+      readiness: 73,
+      academics: 82,
+    },
+    whySelected: ["Python + statistics foundation", "Strong communication score"],
+    weakOrMissing: ["Advanced SQL"],
+    recommendation: "GOOD MATCH",
+  },
+  {
+    id: "match_meera_brightlearn",
+    studentId: "stu_meera",
+    driveId: "drv_brightlearn",
+    overallFit: 84,
+    breakdown: {
+      eligibility: 100,
+      skills: 81,
+      semanticMatch: 80,
+      projects: 82,
+      interview: 76,
+      readiness: 80,
+      academics: 86,
+    },
+    whySelected: ["Strong Python and SQL", "Consistent readiness growth"],
+    weakOrMissing: ["TypeScript", "React depth"],
+    recommendation: "GOOD MATCH",
+  },
+  {
+    id: "match_amit_aerobuild",
+    studentId: "stu_amit",
+    driveId: "drv_aerobuild",
+    overallFit: 52,
+    breakdown: {
+      eligibility: 100,
+      skills: 58,
+      semanticMatch: 55,
+      projects: 35,
+      interview: 30,
+      readiness: 43,
+      academics: 52,
+    },
+    whySelected: ["CAD fundamentals align with the design brief"],
+    weakOrMissing: ["Aptitude score", "Domain projects", "Interview readiness"],
+    recommendation: "WEAK MATCH — intervention recommended before the drive",
+  },
+  {
+    id: "match_farhan_aerobuild",
+    studentId: "stu_farhan",
+    driveId: "drv_aerobuild",
+    overallFit: 66,
+    breakdown: {
+      eligibility: 100,
+      skills: 70,
+      semanticMatch: 68,
+      projects: 52,
+      interview: 52,
+      readiness: 58,
+      academics: 70,
+    },
+    whySelected: ["SolidWorks and thermodynamics fundamentals"],
+    weakOrMissing: ["Aptitude score", "Project depth"],
+    recommendation: "MODERATE MATCH",
   },
 ];
 
@@ -91,3 +340,6 @@ export const getMatch = (studentId: string, driveId: string): CandidateMatch | u
 
 export const getMatchesByDrive = (driveId: string): CandidateMatch[] =>
   matches.filter((m) => m.driveId === driveId).sort((a, b) => b.overallFit - a.overallFit);
+
+export const getMatchesByStudent = (studentId: string): CandidateMatch[] =>
+  matches.filter((m) => m.studentId === studentId).sort((a, b) => b.overallFit - a.overallFit);

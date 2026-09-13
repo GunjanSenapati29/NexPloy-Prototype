@@ -1,11 +1,10 @@
 import { AppShell } from "@/components/layout/AppShell";
-import { RoleSync } from "@/components/layout/RoleSync";
+import { RoleGuard } from "@/components/layout/RoleGuard";
 
-export default function RecruiterLayout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <RoleSync role="recruiter" />
+    <RoleGuard segmentRole="recruiter">
       <AppShell>{children}</AppShell>
-    </>
+    </RoleGuard>
   );
 }

@@ -1,25 +1,30 @@
 import { notFound } from "next/navigation";
-import { MapPin, IndianRupee, Calendar, ListChecks, CheckCircle2, XCircle } from "lucide-react";
-import { Card, CardTitle } from "@/components/ui/card";
+import {
+  MapPin,
+  IndianRupee,
+  Calendar,
+  ListChecks,
+  CheckCircle2,
+  XCircle,
+  Users,
+  Building2,
+  ShieldCheck,
+  ShieldX,
+} from "lucide-react";
+import { CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { MatchBreakdownBars } from "@/components/intelligence/MatchBreakdown";
 import { JourneyTimeline } from "@/components/intelligence/JourneyTimeline";
+import { EligibilityChecklist } from "@/components/intelligence/EligibilityChecklist";
+import { DepthCard } from "@/components/intelligence/DepthCard";
+import { AnimatedMetric } from "@/components/intelligence/AnimatedMetric";
 import { drives, getDriveById } from "@/data/mock/drives";
-import { getApplicationsByStudent } from "@/data/mock/applications";
+import { getApplication } from "@/data/mock/applications";
 import { getMatch } from "@/data/mock/matches";
 import { primaryStudent } from "@/data/mock/students";
-import type { ApplicationStatus } from "@/types";
-
-const statusToIndex: Record<ApplicationStatus, number> = {
-  eligible: 2,
-  applied: 3,
-  shortlisted: 4,
-  interview: 5,
-  offer: 6,
-  joined: 7,
-  rejected: 2,
-};
+import { evaluateEligibility } from "@/lib/eligibility";
+import { applicationStageIndex, applicationStatusLabel, driveStatusTone } from "@/lib/status";
 
 export function generateStaticParams() {
   return drives.map((d) => ({ id: d.id }));
@@ -29,30 +34,49 @@ export default function DriveDetailPage({ params }: { params: { id: string } }) 
   const drive = getDriveById(params.id);
   if (!drive) notFound();
 
-  const applications = getApplicationsByStudent(primaryStudent.id);
-  const app = applications.find((a) => a.driveId === drive.id);
-  const journeyIndex = app ? statusToIndex[app.status] : 2;
-  const match = getMatch(primaryStudent.id, drive.id);
+  const student = primaryStudent;
+  const app = getApplication(student.id, drive.id);
+  const journeyIndex = app ? applicationStageIndex[app.status] : -1;
+  const match = getMatch(student.id, drive.id);
+  const eligibility = evaluateEligibility(student, drive);
 
   return (
     <div className="mx-auto max-w-5xl">
       <PageHeader
-        eyebrow={drive.companyName}
+        eyebrow={`${drive.companyName} · ${drive.driveType}`}
         title={drive.role}
         subtitle={drive.description}
-        actions={<Badge variant={drive.eligibilityResult === "ELIGIBLE" ? "success" : "risk"}>{drive.eligibilityResult}</Badge>}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant={driveStatusTone[drive.status]}>{drive.status}</Badge>
+            <Badge variant={eligibility.eligible ? "success" : "risk"} className="gap-1">
+              {eligibility.eligible ? (
+                <ShieldCheck className="h-3 w-3" />
+              ) : (
+                <ShieldX className="h-3 w-3" />
+              )}
+              {eligibility.eligible ? "ELIGIBLE" : "NOT ELIGIBLE"}
+            </Badge>
+          </div>
+        }
       />
 
-      <Card className="mb-5 p-5">
-        <CardTitle className="mb-3">Placement Journey</CardTitle>
-        <JourneyTimeline currentIndex={journeyIndex} />
-      </Card>
+      <DepthCard className="mb-5 p-5">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <CardTitle>Placement Journey</CardTitle>
+          {app && <Badge variant="muted">{applicationStatusLabel[app.status]}</Badge>}
+        </div>
+        <JourneyTimeline currentIndex={journeyIndex} halted={app?.status === "rejected"} />
+      </DepthCard>
 
       <div className="grid gap-5 lg:grid-cols-2">
         <div className="space-y-5">
-          <Card className="p-5">
-            <CardTitle className="mb-3">Role Details</CardTitle>
+          <DepthCard className="p-5">
+            <CardTitle className="mb-3">Drive Details</CardTitle>
             <div className="space-y-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Building2 className="h-3.5 w-3.5" /> {drive.driveType} · {drive.venue}
+              </div>
               <div className="flex items-center gap-2">
                 <MapPin className="h-3.5 w-3.5" /> {drive.location}
               </div>
@@ -60,10 +84,16 @@ export default function DriveDetailPage({ params }: { params: { id: string } }) 
                 <IndianRupee className="h-3.5 w-3.5" /> {drive.package}
               </div>
               <div className="flex items-center gap-2">
-                <Calendar className="h-3.5 w-3.5" /> Drive on {drive.driveDate} at {drive.driveTime} · Apply by {drive.deadline}
+                <Users className="h-3.5 w-3.5" /> {drive.expectedHiring} expected hires
+              </div>
+              <div className="flex items-center gap-2">
+                <Calendar className="h-3.5 w-3.5" /> Drive on {drive.driveDate} at {drive.driveTime}{" "}
+                · Apply by {drive.deadline}
               </div>
             </div>
-            <p className="mb-2 mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Required Skills</p>
+            <p className="mb-2 mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Required Skills
+            </p>
             <div className="flex flex-wrap gap-1.5">
               {drive.requiredSkills.map((s) => (
                 <Badge key={s} variant="muted">
@@ -71,28 +101,22 @@ export default function DriveDetailPage({ params }: { params: { id: string } }) 
                 </Badge>
               ))}
             </div>
-          </Card>
+          </DepthCard>
 
-          <Card className="p-5">
-            <CardTitle className="mb-3">Eligibility Checklist</CardTitle>
-            <div className="space-y-2">
-              {drive.eligibility.map((e) => (
-                <div key={e.label} className="flex items-center justify-between rounded-lg border border-border px-3 py-2">
-                  <div>
-                    <p className="text-sm font-medium">{e.label}</p>
-                    <p className="text-xs text-muted-foreground">{e.detail}</p>
-                  </div>
-                  {e.passed ? <CheckCircle2 className="h-4 w-4 text-success" /> : <XCircle className="h-4 w-4 text-risk" />}
-                </div>
-              ))}
+          <DepthCard className="p-5">
+            <div className="mb-1 flex items-center justify-between">
+              <CardTitle>Eligibility Check</CardTitle>
             </div>
-            <div className="mt-3 flex items-center justify-between rounded-lg bg-elevated px-3 py-2.5">
-              <span className="text-sm font-medium">Overall Result</span>
-              <Badge variant={drive.eligibilityResult === "ELIGIBLE" ? "success" : "risk"}>{drive.eligibilityResult}</Badge>
-            </div>
-          </Card>
+            <p className="mb-3 text-xs text-muted-foreground">
+              Minimum CGPA {drive.criteria.minCgpa} · Branches{" "}
+              {drive.criteria.allowedBranches.join(", ")} · Max {drive.criteria.maxBacklogs} active
+              backlog{drive.criteria.maxBacklogs === 1 ? "" : "s"} · {drive.criteria.graduationYear}{" "}
+              batch
+            </p>
+            <EligibilityChecklist student={student} drive={drive} />
+          </DepthCard>
 
-          <Card className="p-5">
+          <DepthCard className="p-5">
             <div className="mb-3 flex items-center gap-2">
               <ListChecks className="h-4 w-4 text-violet-bright" />
               <CardTitle>Selection Rounds</CardTitle>
@@ -110,22 +134,26 @@ export default function DriveDetailPage({ params }: { params: { id: string } }) 
                 </div>
               ))}
             </div>
-          </Card>
+          </DepthCard>
         </div>
 
-        {match && (
+        {match ? (
           <div className="space-y-5">
-            <Card className="p-5">
+            <DepthCard className="p-5">
               <div className="flex items-center justify-between">
                 <CardTitle>Matching Breakdown</CardTitle>
-                <span className="text-2xl font-semibold text-violet-bright tabular-nums">{match.overallFit}%</span>
+                <span className="text-2xl font-semibold tabular-nums text-violet-bright">
+                  <AnimatedMetric value={match.overallFit} suffix="%" />
+                </span>
               </div>
-              <p className="mb-4 mt-1 demo-data-label">Mocked prototype intelligence</p>
+              <p className="demo-data-label mb-4 mt-1">Mocked prototype intelligence</p>
               <MatchBreakdownBars breakdown={match.breakdown} />
-            </Card>
+            </DepthCard>
 
-            <Card className="p-5">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-success">Why You Match</p>
+            <DepthCard className="p-5">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-success">
+                Why You Match
+              </p>
               <ul className="mb-4 space-y-1.5">
                 {match.whySelected.map((w) => (
                   <li key={w} className="flex gap-2 text-sm text-muted-foreground">
@@ -133,7 +161,9 @@ export default function DriveDetailPage({ params }: { params: { id: string } }) 
                   </li>
                 ))}
               </ul>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-risk">Missing Skills</p>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-risk">
+                Missing Skills
+              </p>
               <ul className="mb-4 space-y-1.5">
                 {match.weakOrMissing.map((w) => (
                   <li key={w} className="flex gap-2 text-sm text-muted-foreground">
@@ -142,11 +172,18 @@ export default function DriveDetailPage({ params }: { params: { id: string } }) 
                 ))}
               </ul>
               <div className="rounded-lg border border-violet/30 bg-violet/5 p-3">
-                <p className="text-xs font-semibold text-violet-bright">Recommended Action</p>
+                <p className="text-xs font-semibold text-violet-bright">Recommendation</p>
                 <p className="mt-1 text-xs text-muted-foreground">{match.recommendation}</p>
               </div>
-            </Card>
+            </DepthCard>
           </div>
+        ) : (
+          <DepthCard className="flex h-fit flex-col items-center justify-center p-8 text-center">
+            <p className="text-sm font-medium">No match analysis yet</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              A match breakdown is generated once you apply to this drive.
+            </p>
+          </DepthCard>
         )}
       </div>
     </div>

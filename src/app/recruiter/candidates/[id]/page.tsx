@@ -1,16 +1,17 @@
 import { notFound } from "next/navigation";
 import { CandidateMatchingPage } from "@/features/recruiter/CandidateMatching";
-import { students } from "@/data/mock/students";
-import { getMatch } from "@/data/mock/matches";
+import { matches, getMatch } from "@/data/mock/matches";
+import { FEATURED_DRIVE_ID } from "@/data/mock/drives";
 
-const DRIVE_ID = "drv_technova";
-
+/** Every student who has a match against the featured drive gets a page. */
 export function generateStaticParams() {
-  return students.map((s) => ({ id: s.id }));
+  return matches
+    .filter((m) => m.driveId === FEATURED_DRIVE_ID)
+    .map((m) => ({ id: m.studentId }));
 }
 
 export default function Page({ params }: { params: { id: string } }) {
-  const match = getMatch(params.id, DRIVE_ID);
+  const match = getMatch(params.id, FEATURED_DRIVE_ID);
   if (!match) notFound();
-  return <CandidateMatchingPage studentId={params.id} driveId={DRIVE_ID} />;
+  return <CandidateMatchingPage studentId={params.id} driveId={FEATURED_DRIVE_ID} />;
 }

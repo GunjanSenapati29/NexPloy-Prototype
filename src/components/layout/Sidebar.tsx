@@ -60,7 +60,7 @@ export function SidebarNav() {
           className="flex w-full items-center gap-2.5 rounded-md border border-violet/30 bg-violet/10 px-2.5 py-2 text-sm font-medium text-violet-bright transition-colors hover:bg-violet/20"
         >
           <MessageSquareText className="h-4 w-4" />
-          Nexploy Copilot
+          NEXPLOY Copilot
           <kbd className="ml-auto rounded border border-violet/30 bg-background/40 px-1.5 py-0.5 text-[10px] text-violet-bright">
             Ctrl K
           </kbd>

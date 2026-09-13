@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { FlaskConical, Info, Sparkles } from "lucide-react";
+import { FlaskConical, Info, Sparkles, GraduationCap, ListChecks, Gauge, TrendingUp, Target } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -11,7 +11,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { ScoreRing } from "@/components/intelligence/ScoreRing";
 import { IntelligencePulse } from "@/components/intelligence/IntelligencePulse";
+import { DepthCard } from "@/components/intelligence/DepthCard";
+import { GlowLine } from "@/components/intelligence/GlowLine";
 import { useAppStore } from "@/hooks/useAppStore";
+import { cn } from "@/lib/utils";
 import {
   WHAT_IF_BASELINE,
   simulateWhatIfScenario,
@@ -20,6 +23,53 @@ import {
 } from "@/lib/simulate";
 
 const FACTORS = Object.keys(whatIfFactorLabels) as WhatIfFactor[];
+
+function ScenarioFlow({
+  selectedCount,
+  readinessImpact,
+  delta,
+  active,
+}: {
+  selectedCount: number;
+  readinessImpact: number;
+  delta: number;
+  active: boolean;
+}) {
+  const stages = [
+    { key: "student", label: "Current Student", icon: GraduationCap, value: null as string | null, live: true },
+    { key: "improvements", label: "Selected Actions", icon: ListChecks, value: `${selectedCount}`, live: selectedCount > 0 },
+    { key: "readiness", label: "Readiness Change", icon: Gauge, value: `+${readinessImpact}`, live: readinessImpact > 0 },
+    { key: "probability", label: "Probability Change", icon: TrendingUp, value: `${delta >= 0 ? "+" : ""}${delta}%`, live: delta !== 0 },
+    { key: "outcome", label: "Recommended Outcome", icon: Target, value: null, live: selectedCount > 0 },
+  ];
+
+  return (
+    <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:gap-2">
+      {stages.map((stage, i) => {
+        const Icon = stage.icon;
+        return (
+          <div key={stage.key} className="flex shrink-0 items-center gap-1 sm:gap-2">
+            <div
+              className={cn(
+                "flex min-w-[92px] flex-col items-center gap-1.5 rounded-xl border px-3 py-2.5 text-center transition-colors duration-300",
+                stage.live ? "border-violet/40 bg-violet/10 shadow-glow" : "border-border bg-card",
+              )}
+            >
+              <Icon className={cn("h-4 w-4", stage.live ? "text-violet-bright" : "text-muted-foreground")} />
+              <span className="text-[9.5px] leading-tight text-muted-foreground">{stage.label}</span>
+              {stage.value !== null && (
+                <span className={cn("text-xs font-semibold tabular-nums", stage.live ? "text-violet-bright" : "text-muted-foreground")}>
+                  {stage.value}
+                </span>
+              )}
+            </div>
+            {i < stages.length - 1 && <GlowLine active={active} className="w-5 sm:w-8" />}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 export function WhatIfSimulator() {
   const [selected, setSelected] = useState<WhatIfFactor[]>([]);
@@ -44,8 +94,12 @@ export function WhatIfSimulator() {
       <PageHeader
         eyebrow="Growth"
         title="What-If Simulator"
-        subtitle="See how specific actions change your placement probability before you commit the time."
+        subtitle={`See how specific actions change your placement probability before you commit the time. Current baseline: ${WHAT_IF_BASELINE}%.`}
       />
+
+      <DepthCard className="mb-5 p-4">
+        <ScenarioFlow selectedCount={selected.length} readinessImpact={result.readinessImpact} delta={delta} active={pulsing} />
+      </DepthCard>
 
       <div className="grid gap-5 lg:grid-cols-[1fr_1.1fr]">
         <IntelligencePulse active={pulsing}>
@@ -109,7 +163,10 @@ export function WhatIfSimulator() {
 
       <Alert className="mt-5">
         <Info />
-        <AlertDescription>Scenario estimate — not a guaranteed placement outcome.</AlertDescription>
+        <AlertDescription>
+          Projected scenario estimate — not a guaranteed placement probability, and not a real ML
+          prediction.
+        </AlertDescription>
       </Alert>
     </div>
   );
