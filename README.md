@@ -75,7 +75,61 @@ readiness → a real readiness engine, mock matching → a real matching pipelin
 mock scheduling → OR-Tools, and mock Copilot → a Groq-backed Copilot, without touching presentation
 components.
 
+## API Layer
+
+`src/lib/api/` sits between the UI and the data. Every function in it is `async` and typed, even
+though today it just wraps `src/data/mock/*.ts` and `src/lib/simulate.ts` — so a real backend swap
+never touches a call site's signature, only its body.
+
+- **Mode flag** — `src/lib/api/config.ts` exports `API_MODE`, read from `NEXT_PUBLIC_API_MODE`
+  (`.env.example`), defaulting to `"mock"`. Nothing branches on it yet; it exists for the day a
+  domain file's mock branch gets a `"live"` counterpart.
+- **Domain files** — one per `src/data/mock/*.ts` file (`students.ts`, `drives.ts`,
+  `applications.ts`, `matches.ts`, `offers.ts`, `documents.ts`, `notifications.ts`, `risk.ts`,
+  `schedules.ts`, `mentors.ts`, `campuses.ts`, `analytics.ts`, `recruiters.ts`, `interviews.ts`).
+  Each function has a `/** METHOD /api/path */` doc comment above it — that comment is the source
+  for `docs/API_CONTRACT.md`, the document to hand your backend teammate.
+- **`client.ts`** — a thin `fetch` wrapper (`apiRequest<T>()`) for the future `"live"` branch. It is
+  not called anywhere yet.
+- **Wired end-to-end today**: `src/features/student/Dashboard.tsx` and
+  `src/features/student/DigitalTwin.tsx` call `src/lib/api/students.ts` instead of importing
+  `src/data/mock/students.ts` directly, fetch with `useEffect`/`useState`, and render a `<Skeleton>`
+  loading state while the (currently instant) mock "request" resolves. Every other screen still
+  imports mock data directly — extend the pattern to a screen only when you're ready to move it.
+
+**To extend the pattern to a new screen**, using `students.ts` as the reference:
+
+1. Confirm the domain file in `src/lib/api/` already exports what you need (it should — Step 2 of
+   the handoff pass wrapped every mock/simulate export). If not, add a function there that wraps
+   the existing `src/data/mock/*.ts` or `src/lib/simulate.ts` export — never reimplement the logic.
+2. In the feature component, replace the direct `@/data/mock/...` import with the matching
+   `@/lib/api/...` import.
+3. Add `useState` for the data (typed `null` initial state) and a `useEffect` that calls the API
+   function on mount and sets state from its resolved value.
+4. Render a loading state (reuse `<Skeleton>` from `@/components/ui/skeleton.tsx`) while the state
+   is `null`, matching the screen's real layout so the swap-in doesn't jump.
+5. Leave every other data source on that screen (other domains, `useAppStore`) untouched unless
+   you're deliberately migrating them too — migrate one domain at a time.
+
+See `docs/API_CONTRACT.md` for the full function-by-function contract.
+
+## What's Not Real Yet
+
+- **Role switching and route restrictions are presentation-only.** `RoleGuard.tsx` says so directly
+  in its own comment: "production will enforce this on the server; here it is presentation only."
+  Picking a role in the topbar or demo login, and the `canAccess` check that blocks a route for the
+  wrong role, are both client-side UI conveniences with zero real security behind them — anyone can
+  bypass them by editing client state. **A real backend must independently authenticate and
+  authorize every request; it must never trust a role the frontend claims.**
+- **No real network calls exist yet.** `API_MODE` defaults to `"mock"` and nothing in `src/lib/api/`
+  currently calls `client.ts`'s `apiRequest()` — every function resolves from local mock data.
+- **All "intelligence" is deterministic, canned logic**, not a real model: Digital Twin scoring,
+  What-If projections, candidate matching, schedule optimization, and the Nexploy Copilot's answers
+  all live in `src/lib/simulate.ts` with fixed lookup tables and no `Math.random`, labeled "Demo
+  Data" / "Prototype Data" in the UI throughout.
+
 ## Deployment
 
 This is a standard Next.js app — import the repository on [Vercel](https://vercel.com/new); it
-auto-detects the framework and needs no environment variables.
+auto-detects the framework. Set `NEXT_PUBLIC_API_MODE` and `NEXT_PUBLIC_API_BASE_URL` (see
+`.env.example`) once a real backend exists — the prototype runs with no environment variables set.

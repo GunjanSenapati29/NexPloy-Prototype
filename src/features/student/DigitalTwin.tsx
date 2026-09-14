@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -19,6 +19,7 @@ import {
 import { Card, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { ScoreRing } from "@/components/intelligence/ScoreRing";
 import { SkillBar } from "@/components/intelligence/SkillBar";
@@ -30,15 +31,17 @@ import {
 import { DigitalTwinCanvas } from "@/components/three/DigitalTwinCanvas";
 import { TrendAreaChart } from "@/components/charts/TrendAreaChart";
 import { showcaseEntrance } from "@/lib/motion-variants";
-import { primaryStudent } from "@/data/mock/students";
 import { drives } from "@/data/mock/drives";
 import { getApplicationsByStudent } from "@/data/mock/applications";
 import { getMatchesByStudent } from "@/data/mock/matches";
 import { getDriveById } from "@/data/mock/drives";
 import { evaluateEligibility } from "@/lib/eligibility";
-import { digitalTwinSteps, simulateDigitalTwinRefresh } from "@/lib/simulate";
+import { getPrimaryStudent, refreshDigitalTwin } from "@/lib/api/students";
+import { digitalTwinSteps } from "@/lib/simulate";
+import type { DigitalTwinResult } from "@/lib/simulate";
 import { riskTone } from "@/lib/status";
 import { cn } from "@/lib/utils";
+import type { Student } from "@/types";
 
 type RunState = "idle" | "running" | "done";
 
@@ -66,11 +69,48 @@ function TwinStat({
   );
 }
 
+function DigitalTwinSkeleton() {
+  return (
+    <div className="mx-auto max-w-5xl">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div className="space-y-2.5">
+          <Skeleton className="h-3 w-24" />
+          <Skeleton className="h-7 w-72" />
+          <Skeleton className="h-4 w-96" />
+        </div>
+        <Skeleton className="h-10 w-52" />
+      </div>
+      <Skeleton className="h-[420px] w-full" />
+      <Skeleton className="mt-5 h-[380px] w-full" />
+      <div className="mt-5 grid gap-5 md:grid-cols-2">
+        <Skeleton className="h-[280px] w-full" />
+        <Skeleton className="h-[280px] w-full" />
+      </div>
+    </div>
+  );
+}
+
 export function DigitalTwinPage() {
-  const s = primaryStudent;
+  const [s, setS] = useState<Student | null>(null);
+  const [result, setResult] = useState<DigitalTwinResult | null>(null);
   const [runState, setRunState] = useState<RunState>("idle");
   const [revealKey, setRevealKey] = useState(0);
-  const result = simulateDigitalTwinRefresh(s.id);
+
+  useEffect(() => {
+    let active = true;
+    getPrimaryStudent().then((student) => {
+      if (!active) return;
+      setS(student);
+      refreshDigitalTwin(student.id).then((r) => {
+        if (active) setResult(r);
+      });
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (!s || !result) return <DigitalTwinSkeleton />;
 
   const trendData = s.readinessTrend.map((v, i) => ({ label: `W${i + 1}`, value: v }));
   const applications = getApplicationsByStudent(s.id).filter((a) => a.status !== "eligible");
@@ -118,6 +158,7 @@ export function DigitalTwinPage() {
                   onDone={() => {
                     setRunState("done");
                     setRevealKey((k) => k + 1);
+                    refreshDigitalTwin(s.id).then(setResult);
                     window.setTimeout(() => setRunState("idle"), 1800);
                   }}
                 />

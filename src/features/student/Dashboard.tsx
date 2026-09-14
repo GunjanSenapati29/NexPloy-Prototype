@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -17,6 +18,7 @@ import {
 import { CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { StatCard } from "@/components/layout/StatCard";
 import { ScoreRing } from "@/components/intelligence/ScoreRing";
@@ -25,7 +27,7 @@ import { GlowLine } from "@/components/intelligence/GlowLine";
 import { DataReveal } from "@/components/intelligence/DataReveal";
 import { TrendAreaChart } from "@/components/charts/TrendAreaChart";
 import { staggerContainer, staggerItem } from "@/lib/motion-variants";
-import { primaryStudent } from "@/data/mock/students";
+import { getPrimaryStudent } from "@/lib/api/students";
 import { drives } from "@/data/mock/drives";
 import { getApplicationsByStudent } from "@/data/mock/applications";
 import { getMatch } from "@/data/mock/matches";
@@ -33,6 +35,7 @@ import { getInterviewsByStudent } from "@/data/mock/interviews";
 import { getOffersByStudent } from "@/data/mock/offers";
 import { evaluateEligibility } from "@/lib/eligibility";
 import { applicationStatusLabel, applicationStatusTone, readinessBand } from "@/lib/status";
+import type { Student } from "@/types";
 
 const DIMENSION_LABELS: Record<string, string> = {
   academic: "Academics",
@@ -45,8 +48,47 @@ const DIMENSION_LABELS: Record<string, string> = {
   placementActivity: "Placement Activity",
 };
 
+function DashboardSkeleton() {
+  return (
+    <div className="mx-auto max-w-6xl">
+      <div className="mb-6 space-y-2.5">
+        <Skeleton className="h-3 w-36" />
+        <Skeleton className="h-7 w-72" />
+        <Skeleton className="h-4 w-96" />
+      </div>
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} className="h-[92px] w-full" />
+        ))}
+      </div>
+      <div className="mt-5 grid gap-5 lg:grid-cols-3">
+        <Skeleton className="h-[340px] w-full lg:col-span-1" />
+        <Skeleton className="h-[340px] w-full lg:col-span-2" />
+      </div>
+      <div className="mt-4 grid gap-5 lg:grid-cols-3">
+        <Skeleton className="h-[260px] w-full lg:col-span-2" />
+        <Skeleton className="h-[260px] w-full" />
+      </div>
+      <Skeleton className="mt-5 h-[220px] w-full" />
+    </div>
+  );
+}
+
 export function StudentDashboard() {
-  const s = primaryStudent;
+  const [s, setS] = useState<Student | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    getPrimaryStudent().then((student) => {
+      if (active) setS(student);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (!s) return <DashboardSkeleton />;
+
   const applications = getApplicationsByStudent(s.id).filter((a) => a.status !== "eligible");
   const trendData = s.readinessTrend.map((v, i) => ({ label: `W${i + 1}`, value: v }));
   const band = readinessBand(s.readiness);
