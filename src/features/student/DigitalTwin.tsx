@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import {
   RefreshCw,
@@ -42,11 +42,6 @@ import type { DigitalTwinResult } from "@/lib/simulate";
 import { riskTone } from "@/lib/status";
 import { cn } from "@/lib/utils";
 import type { Student } from "@/types";
-
-const DigitalTwinCanvas = dynamic(
-  () => import("@/components/three/DigitalTwinCanvas").then((m) => m.DigitalTwinCanvas),
-  { ssr: false, loading: () => <div className="h-full w-full animate-pulse rounded-xl bg-card/40" /> },
-);
 
 type RunState = "idle" | "running" | "done";
 
@@ -94,6 +89,19 @@ function DigitalTwinSkeleton() {
     </div>
   );
 }
+
+// Deferred out of this page's chunk — it's a client-only wrapper around the
+// (already independently code-split) three.js constellation scene, and has
+// no reason to block this page's own bundle from becoming interactive.
+// Loading fallback matches the fixed h-[340px]/h-[380px] card it sits
+// inside, so nothing shifts when the real canvas mounts.
+const DigitalTwinCanvas = dynamic(
+  () => import("@/components/three/DigitalTwinCanvas").then((m) => m.DigitalTwinCanvas),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-full w-full" />,
+  },
+);
 
 export function DigitalTwinPage() {
   const [s, setS] = useState<Student | null>(null);

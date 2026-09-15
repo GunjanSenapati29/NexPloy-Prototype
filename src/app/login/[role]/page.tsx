@@ -1,0 +1,195 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { ArrowLeft, ArrowRight, ShieldAlert } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Logo } from "@/components/layout/Logo";
+import { RoleSignatureCanvas } from "@/components/three/RoleSignatureCanvas";
+import { useAppStore } from "@/hooks/useAppStore";
+import type { Role } from "@/types";
+import {
+  roleHome,
+  roleIcon,
+  roleLabel,
+  roleDescription,
+  roleTagline,
+  roleDemoEmail,
+  roleSignals,
+  roleOrder,
+} from "@/components/layout/nav-config";
+import { staggerContainer, staggerItem } from "@/lib/motion-variants";
+
+const MotionButton = motion(Button);
+
+function isRole(value: string): value is Role {
+  return (roleOrder as string[]).includes(value);
+}
+
+export default function RoleLoginPage({ params }: { params: { role: string } }) {
+  if (!isRole(params.role)) {
+    return <UnknownRole slug={params.role} />;
+  }
+  return <RoleLoginForm role={params.role} />;
+}
+
+function UnknownRole({ slug }: { slug: string }) {
+  return (
+    <div className="flex min-h-screen items-center justify-center p-6">
+      <Card className="flex max-w-sm flex-col items-center gap-3 p-8 text-center">
+        <ShieldAlert className="h-8 w-8 text-risk" />
+        <p className="text-sm font-semibold">&ldquo;{slug}&rdquo; isn&apos;t a NEXPLOY role.</p>
+        <p className="text-xs text-muted-foreground">Pick one of the five roles to continue.</p>
+        <Button asChild variant="glow" size="sm" className="mt-2">
+          <Link href="/login">
+            All roles <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </Button>
+      </Card>
+    </div>
+  );
+}
+
+function RoleLoginForm({ role }: { role: Role }) {
+  const router = useRouter();
+  const setRole = useAppStore((s) => s.setRole);
+  const [email, setEmail] = useState(roleDemoEmail[role]);
+  const [password, setPassword] = useState("••••••••");
+
+  const Icon = roleIcon[role];
+  const signals = roleSignals[role];
+
+  const handleSignIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    setRole(role);
+    router.push(roleHome[role]);
+  };
+
+  return (
+    <div className="grid min-h-screen lg:grid-cols-2">
+      {/* Left panel — role identity + a preview of what this role sees */}
+      <div className="relative hidden overflow-hidden bg-elevated lg:flex lg:flex-col lg:justify-between lg:p-12">
+        <div
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background: "radial-gradient(70% 60% at 20% 20%, hsl(var(--violet) / 0.22), transparent 70%)",
+          }}
+        />
+        <div className="flex items-center justify-between">
+          <Link href="/">
+            <Logo />
+          </Link>
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" /> All roles
+          </Link>
+        </div>
+
+        <motion.div
+          key={role}
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className="max-w-md"
+        >
+          <motion.p
+            variants={staggerItem}
+            className="text-xs font-medium uppercase tracking-wider text-violet-bright"
+          >
+            {roleLabel[role]}
+          </motion.p>
+          <motion.h1 variants={staggerItem} className="mt-1 text-3xl font-semibold leading-tight tracking-tight">
+            {roleTagline[role]}
+          </motion.h1>
+
+          <motion.div variants={staggerItem} className="relative mt-4 h-[320px] w-full">
+            <RoleSignatureCanvas Icon={Icon} label={roleLabel[role]} signals={signals} />
+          </motion.div>
+        </motion.div>
+
+        <p className="text-xs text-muted-foreground/60">
+          NEXPLOY Prototype — simulated data, no real authentication.
+        </p>
+      </div>
+
+      {/* Right panel — the sign-in form */}
+      <div className="flex items-center justify-center p-6 sm:p-10">
+        <motion.div
+          key={role}
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className="w-full max-w-sm"
+        >
+          <motion.div variants={staggerItem} className="mb-8 flex items-center justify-between lg:hidden">
+            <Logo />
+            <Link href="/login" className="text-xs text-muted-foreground hover:text-foreground">
+              All roles
+            </Link>
+          </motion.div>
+
+          <motion.div variants={staggerItem} className="flex items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-violet/30 bg-violet/10 text-violet-bright">
+              <Icon className="h-5 w-5" />
+            </span>
+            <div>
+              <h2 className="text-xl font-semibold">Sign in as {roleLabel[role]}</h2>
+              <p className="text-xs text-muted-foreground">{roleDescription[role]}</p>
+            </div>
+          </motion.div>
+
+          <motion.form variants={staggerItem} onSubmit={handleSignIn} className="mt-6 space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <MotionButton
+              type="submit"
+              variant="glow"
+              className="w-full"
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Sign In as {roleLabel[role]} <ArrowRight className="h-4 w-4" />
+            </MotionButton>
+          </motion.form>
+
+          <motion.div variants={staggerItem} className="mt-6 flex items-center gap-3">
+            <div className="h-px flex-1 bg-border" />
+            <span className="text-[11px] uppercase tracking-wide text-muted-foreground/60">
+              or continue with
+            </span>
+            <div className="h-px flex-1 bg-border" />
+          </motion.div>
+          <motion.div variants={staggerItem} className="mt-4 grid grid-cols-2 gap-2">
+            <Button variant="outline" type="button" disabled className="opacity-70">
+              Google
+            </Button>
+            <Button variant="outline" type="button" disabled className="opacity-70">
+              Microsoft
+            </Button>
+          </motion.div>
+          <motion.p variants={staggerItem} className="mt-3 text-center text-[11px] text-muted-foreground/60">
+            Visual only — this prototype uses simulated sign-in.
+          </motion.p>
+        </motion.div>
+      </div>
+    </div>
+  );
+}

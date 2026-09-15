@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -22,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { LazyShaderBackground as ShaderBackground } from "@/components/ui/lazy-shader-background";
 import { Logo } from "@/components/layout/Logo";
 import { DemoDataBadge } from "@/components/layout/DemoDataBadge";
 import { ScoreRing } from "@/components/intelligence/ScoreRing";
@@ -39,11 +39,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-
-const ShaderBackground = dynamic(
-  () => import("@/components/ui/mesh-gradient").then((m) => m.ShaderBackground),
-  { ssr: false, loading: () => <div className="absolute inset-0 animate-pulse bg-card/40" /> },
-);
 
 const navLinks = [
   { label: "Platform", href: "#platform" },

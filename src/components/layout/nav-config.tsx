@@ -86,6 +86,57 @@ export const roleHome: Record<Role, string> = {
 
 export const roleOrder: Role[] = ["student", "recruiter", "officer", "mentor", "admin"];
 
+/** Punchier one-line hook used on the per-role sign-in page hero — distinct
+ * from the short roleDescription used in compact nav/picker contexts. */
+export const roleTagline: Record<Role, string> = {
+  student: "Your placement readiness, decoded in real time.",
+  recruiter: "Ranked, explainable candidates — not a resume pile.",
+  officer: "Run the entire placement cycle from one command center.",
+  mentor: "See who needs you before they fall behind.",
+  admin: "Every campus, one governed view.",
+};
+
+/** Demo-only credentials shown pre-filled on each role's sign-in page.
+ * No real auth — see the PROTOTYPE ROLE MODEL note above. */
+export const roleDemoEmail: Record<Role, string> = {
+  student: "rahul.sharma@nexploy.demo",
+  recruiter: "talent@technova.demo",
+  officer: "placements@nexploy.demo",
+  mentor: "anita.mishra@nexploy.demo",
+  admin: "admin@nexploy.demo",
+};
+
+/** Three feature highlights shown on each role's sign-in page — named,
+ * real features pulled from navByRole below (not invented, and no
+ * fabricated numbers), just surfaced earlier as a preview. */
+export const roleSignals: Record<Role, { icon: LucideIcon; label: string }[]> = {
+  student: [
+    { icon: Fingerprint, label: "Digital Twin" },
+    { icon: Target, label: "Skill Gap" },
+    { icon: Briefcase, label: "Placement Drives" },
+  ],
+  recruiter: [
+    { icon: Users, label: "Candidate Pool" },
+    { icon: BarChart3, label: "Analytics" },
+    { icon: Award, label: "Offers" },
+  ],
+  officer: [
+    { icon: Sparkles, label: "Command Center" },
+    { icon: ShieldAlert, label: "Risk Radar" },
+    { icon: CalendarClock, label: "Drive Orchestrator" },
+  ],
+  mentor: [
+    { icon: HeartHandshake, label: "Intervention Plans" },
+    { icon: ShieldAlert, label: "At-Risk Students" },
+    { icon: BarChart3, label: "Progress Tracking" },
+  ],
+  admin: [
+    { icon: Network, label: "Campus Management" },
+    { icon: BarChart3, label: "Cross-Campus Analytics" },
+    { icon: KeyRound, label: "Role & Access" },
+  ],
+};
+
 /** Route prefixes each role is allowed to open in the prototype. */
 export const roleRouteAccess: Record<Role, string[]> = {
   student: ["/student"],
