@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -28,7 +29,6 @@ import {
   IntelligencePulse,
   IntelligencePulseBadge,
 } from "@/components/intelligence/IntelligencePulse";
-import { DigitalTwinCanvas } from "@/components/three/DigitalTwinCanvas";
 import { TrendAreaChart } from "@/components/charts/TrendAreaChart";
 import { showcaseEntrance } from "@/lib/motion-variants";
 import { drives } from "@/data/mock/drives";
@@ -42,6 +42,11 @@ import type { DigitalTwinResult } from "@/lib/simulate";
 import { riskTone } from "@/lib/status";
 import { cn } from "@/lib/utils";
 import type { Student } from "@/types";
+
+const DigitalTwinCanvas = dynamic(
+  () => import("@/components/three/DigitalTwinCanvas").then((m) => m.DigitalTwinCanvas),
+  { ssr: false, loading: () => <div className="h-full w-full animate-pulse rounded-xl bg-card/40" /> },
+);
 
 type RunState = "idle" | "running" | "done";
 
