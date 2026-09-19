@@ -1,13 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { Logo } from "@/components/layout/Logo";
 import { LazyShaderBackground as ShaderBackground } from "@/components/ui/lazy-shader-background";
-import { RoleConstellationCanvas } from "@/components/three/RoleConstellationCanvas";
-import { roleOrder, roleIcon, roleLabel } from "@/components/layout/nav-config";
+import { RoleSelector } from "@/components/login/RoleSelector";
 import { fadeUp } from "@/lib/motion-variants";
 
 /**
@@ -16,17 +14,12 @@ import { fadeUp } from "@/lib/motion-variants";
  * (/login/[role]) instead of a single shared form with a role switch.
  */
 export default function LoginHubPage() {
-  const constellationRoles = useMemo(
-    () => roleOrder.map((role) => ({ role, label: roleLabel[role], icon: roleIcon[role] })),
-    [],
-  );
-
   return (
     <div className="relative min-h-screen overflow-hidden">
       <ShaderBackground className="absolute inset-0" />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background" />
 
-      <div className="relative mx-auto flex min-h-screen w-full max-w-5xl flex-col px-6 py-8 sm:px-10">
+      <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 py-8 sm:px-10">
         <div className="flex items-center justify-between">
           <Link href="/">
             <Logo />
@@ -39,7 +32,7 @@ export default function LoginHubPage() {
           </Link>
         </div>
 
-        <div className="flex flex-1 flex-col items-center justify-center py-12 text-center">
+        <div className="flex flex-1 flex-col items-center justify-center py-8 text-center">
           <motion.div initial="hidden" animate="visible" variants={fadeUp}>
             <p className="text-xs font-medium uppercase tracking-wider text-violet-bright">
               Sign in to NEXPLOY
@@ -48,7 +41,7 @@ export default function LoginHubPage() {
               Who&apos;s signing in?
             </h1>
             <p className="mx-auto mt-3 max-w-md text-balance text-sm leading-relaxed text-muted-foreground">
-              Every role sees a different NEXPLOY. Pick yours to continue to a sign-in built around it.
+              Every role sees a different side of NEXPLOY. Choose yours to continue.
             </p>
           </motion.div>
 
@@ -56,9 +49,9 @@ export default function LoginHubPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="mt-10 w-full"
+            className="mt-8 w-full"
           >
-            <RoleConstellationCanvas roles={constellationRoles} />
+            <RoleSelector />
           </motion.div>
         </div>
 

@@ -39,6 +39,10 @@ function ConstellationFallback({ roles }: { roles: ConstellationRole[] }) {
  * at wide viewports (too much dead space, nodes small and off-center).
  * The 3D scene component is kept unused rather than deleted in case we
  * revisit it, but this entry point no longer mounts it.
+ *
+ * NOTE: as of the RoleSelector.tsx redesign, the actual /login page no
+ * longer imports this component at all — it now renders RoleSelector
+ * directly. This file is kept only as unused legacy fallback code.
  */
 export function RoleConstellationCanvas({ roles }: { roles: ConstellationRole[] }) {
   return <ConstellationFallback roles={roles} />;

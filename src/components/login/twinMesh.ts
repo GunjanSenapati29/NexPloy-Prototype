@@ -34,27 +34,34 @@ const KEY: Pt[] = [
   [196, 110], // lips
   [193, 117],
   [191, 126], // chin
-  [182, 134],
-  [170, 137], // under-jaw
-  [163, 142], // throat
-  [166, 154], // neck front
-  [172, 166],
-  [194, 175], // neck → shoulder
-  [220, 184],
-  [240, 198], // shoulder
-  [250, 220],
-  [253, 258],
-  [254, 300],
-  [254, 374], // bust, right
-  [46, 374], // bust, left
-  [46, 300],
-  [47, 258],
-  [52, 224],
-  [66, 202], // far shoulder
-  [90, 189],
-  [116, 179],
-  [128, 168], // neck back
-  [130, 152],
+  [185, 136], // squarer jaw than a softer/rounder chin would read
+  [174, 140], // under-jaw
+  [168, 144], // throat — thicker than a slender neck
+  [173, 157], // neck front
+  [181, 169],
+  [196, 179], // neck → shoulder: broader, more square-set shoulders
+  [214, 187],
+  [232, 194], // shoulder plateau — flatter top, less sloped
+  [248, 200],
+  [260, 210],
+  [266, 226],
+  [268, 248],
+  [268, 285],
+  [268, 325],
+  [268, 374], // bust, right — wider frame overall
+  [32, 374], // bust, left
+  [32, 325],
+  [32, 285],
+  [32, 248],
+  [34, 226],
+  [40, 210], // far shoulder — mirrors the right side
+  [52, 200],
+  [68, 194],
+  [86, 187],
+  [104, 179],
+  [119, 169],
+  [127, 157], // neck back
+  [132, 144],
   [127, 138], // nape
   [117, 126],
   [108, 110],
