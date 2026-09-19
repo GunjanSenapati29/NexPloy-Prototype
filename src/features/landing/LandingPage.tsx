@@ -14,24 +14,20 @@ import {
   Building2,
   Sparkles,
   ArrowUpRight,
-  Gauge,
   HeartHandshake,
   Landmark,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { LazyShaderBackground as ShaderBackground } from "@/components/ui/lazy-shader-background";
 import { Logo } from "@/components/layout/Logo";
 import { DemoDataBadge } from "@/components/layout/DemoDataBadge";
-import { ScoreRing } from "@/components/intelligence/ScoreRing";
+import { useAnimatedNumber } from "@/hooks/useAnimatedNumber";
 import { DepthCard } from "@/components/intelligence/DepthCard";
-import { NetworkCanvas } from "@/components/three/NetworkCanvas";
+import { PlacementIntelligenceCore, PlacementIntelligenceCompact } from "@/components/landing/PlacementIntelligenceCore";
+import { PlacementFlowMap } from "@/components/landing/PlacementFlowMap";
 import { fadeUp, staggerContainer, staggerItem, showcaseEntrance } from "@/lib/motion-variants";
-import { primaryStudent } from "@/data/mock/students";
 import { landingMetrics } from "@/data/mock/analytics";
-import { drives } from "@/data/mock/drives";
-import { evaluateEligibility } from "@/lib/eligibility";
 import {
   Dialog,
   DialogContent,
@@ -46,15 +42,6 @@ const navLinks = [
   { label: "Recruiters", href: "#recruiters" },
   { label: "Placement Teams", href: "#officers" },
   { label: "Placement Intelligence", href: "#intelligence" },
-];
-
-const flowSteps = [
-  { label: "Student", icon: GraduationCap },
-  { label: "Skills", icon: Target },
-  { label: "Readiness", icon: Gauge },
-  { label: "Opportunity", icon: Sparkles },
-  { label: "Recruiter", icon: Building2 },
-  { label: "Offer", icon: ShieldCheck },
 ];
 
 const demoStoryScript = [
@@ -136,14 +123,18 @@ const platformPillars = [
   },
 ];
 
+function CountUp({ value, suffix = "" }: { value: number; suffix?: string }) {
+  const v = useAnimatedNumber(value, 1000);
+  return (
+    <>
+      {Math.round(v).toLocaleString("en-US")}
+      {suffix}
+    </>
+  );
+}
+
 export function LandingPage() {
   const [watchOpen, setWatchOpen] = useState(false);
-
-  // Derived from the same eligibility engine the app uses, so the hero
-  // card can never drift from the student Drives screen.
-  const eligibleDriveCount = drives.filter(
-    (d) => d.status === "ACTIVE" && evaluateEligibility(primaryStudent, d).eligible,
-  ).length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -176,7 +167,7 @@ export function LandingPage() {
         <div className="relative min-h-[640px] overflow-hidden">
           <ShaderBackground className="absolute inset-0" />
           <div className="relative z-10">
-            <div className="container grid gap-12 py-16 lg:grid-cols-2 lg:items-center lg:py-24">
+            <div className="container grid gap-12 py-16 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:py-20">
               <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
                 <motion.div variants={staggerItem}>
                   <Badge className="mb-5 border border-violet/30 bg-violet/10 text-violet-bright" variant="default">
@@ -184,7 +175,7 @@ export function LandingPage() {
                   </Badge>
                 </motion.div>
                 <motion.h1 variants={staggerItem} className="text-balance text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
-                  From Potential to <span className="text-violet-bright">Placement.</span>
+                  From Potential to <span className="bg-gradient-to-r from-violet-bright to-[#C4A6FF] bg-clip-text text-transparent">Placement.</span>
                 </motion.h1>
                 <motion.p variants={staggerItem} className="mt-5 max-w-xl text-balance text-base leading-relaxed text-muted-foreground">
                   NEXPLOY is an AI-powered placement intelligence platform that helps students understand and
@@ -203,65 +194,12 @@ export function LandingPage() {
                 </motion.div>
               </motion.div>
 
-              {/* Digital Twin preview */}
-              <motion.div initial="hidden" animate="visible" variants={showcaseEntrance}>
-                <Card className="glass-panel relative overflow-hidden p-6 shadow-glow">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                        Placement Digital Twin
-                      </p>
-                      <p className="text-sm font-semibold text-foreground">{primaryStudent.name}</p>
-                    </div>
-                    <DemoDataBadge />
-                  </div>
-
-                  <div className="mt-5 flex items-center gap-6">
-                    <ScoreRing value={primaryStudent.readiness} size={116} strokeWidth={9} label="Readiness" />
-                    <div className="flex-1 space-y-3">
-                      <div className="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2">
-                        <span className="text-xs text-muted-foreground">Placement Probability</span>
-                        <span className="text-sm font-semibold text-violet-bright tabular-nums">
-                          {primaryStudent.placementProbability}%
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2">
-                        <span className="text-xs text-muted-foreground">Eligible Drives</span>
-                        <span className="text-sm font-semibold tabular-nums">{eligibleDriveCount}</span>
-                      </div>
-                      <div className="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2">
-                        <span className="text-xs text-muted-foreground">Risk</span>
-                        <Badge variant="success">{primaryStudent.riskLevel}</Badge>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-5 rounded-lg border border-violet/30 bg-violet/5 px-3 py-2.5">
-                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Top Opportunity</p>
-                    <div className="mt-1 flex items-center justify-between">
-                      <span className="text-sm font-medium text-foreground">Backend Developer · TechNova</span>
-                      <span className="text-sm font-semibold text-violet-bright">91% match</span>
-                    </div>
-                  </div>
-
-                  {/* flow strip */}
-                  <div className="mt-6 flex items-center justify-between">
-                    {flowSteps.map((step, i) => {
-                      const Icon = step.icon;
-                      return (
-                        <div key={step.label} className="flex flex-1 items-center">
-                          <div className="flex flex-col items-center gap-1">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-violet/30 bg-violet/10">
-                              <Icon className="h-4 w-4 text-violet-bright" />
-                            </div>
-                            <span className="text-[9px] text-muted-foreground">{step.label}</span>
-                          </div>
-                          {i < flowSteps.length - 1 && <div className="mx-1 h-px flex-1 bg-border" />}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </Card>
+              {/* Placement Intelligence Core */}
+              <motion.div initial="hidden" animate="visible" variants={showcaseEntrance} className="hidden sm:block">
+                <PlacementIntelligenceCore />
+              </motion.div>
+              <motion.div initial="hidden" animate="visible" variants={showcaseEntrance} className="sm:hidden">
+                <PlacementIntelligenceCompact />
               </motion.div>
             </div>
           </div>
@@ -271,13 +209,15 @@ export function LandingPage() {
         <div className="border-y border-border/60 bg-elevated/40">
           <div className="container grid grid-cols-2 gap-6 py-8 sm:grid-cols-4">
             {[
-              { label: "Students", value: landingMetrics.students.toLocaleString() },
-              { label: "Placement Rate", value: `${landingMetrics.placementRate}%` },
-              { label: "Offers", value: landingMetrics.offers.toLocaleString() },
-              { label: "Recruiters", value: `${landingMetrics.recruiters}+` },
+              { label: "Students", value: landingMetrics.students, suffix: "" },
+              { label: "Placement Rate", value: landingMetrics.placementRate, suffix: "%" },
+              { label: "Offers", value: landingMetrics.offers, suffix: "" },
+              { label: "Recruiters", value: landingMetrics.recruiters, suffix: "+" },
             ].map((m) => (
               <div key={m.label} className="text-center">
-                <p className="text-2xl font-semibold tabular-nums text-foreground sm:text-3xl">{m.value}</p>
+                <p className="text-2xl font-semibold tabular-nums text-foreground sm:text-3xl">
+                  <CountUp value={m.value} suffix={m.suffix} />
+                </p>
                 <p className="mt-1 text-xs text-muted-foreground">{m.label}</p>
               </div>
             ))}
@@ -288,9 +228,9 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Placement Intelligence Network — high-intensity 3D showcase */}
+      {/* Placement Intelligence Flow Map */}
       <section id="intelligence" className="relative overflow-hidden border-y border-border/60 bg-elevated/30">
-        <div className="container py-14">
+        <div className="container py-16">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -303,22 +243,13 @@ export function LandingPage() {
             </p>
             <h2 className="text-3xl font-semibold tracking-tight">Every placement is a connected signal</h2>
             <p className="mt-3 text-muted-foreground">
-              Readiness, opportunity, and hiring intent flow through one live network — not six disconnected
-              spreadsheets.
+              From student potential to recruiter intent, NEXPLOY connects every signal that shapes a placement
+              outcome.
             </p>
           </motion.div>
 
-          <div className="relative mt-10 h-[420px] w-full sm:h-[480px]">
-            <NetworkCanvas />
-            <div className="pointer-events-none absolute left-1/2 top-3 -translate-x-1/2 sm:left-4 sm:top-4 sm:translate-x-0">
-              <div className="glass-panel flex items-center gap-3 rounded-xl px-3.5 py-2.5 shadow-glow">
-                <ScoreRing value={primaryStudent.readiness} size={40} strokeWidth={4} />
-                <div>
-                  <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Digital Twin</p>
-                  <p className="text-xs font-semibold text-foreground">{primaryStudent.name}</p>
-                </div>
-              </div>
-            </div>
+          <div className="mt-12">
+            <PlacementFlowMap />
           </div>
         </div>
       </section>

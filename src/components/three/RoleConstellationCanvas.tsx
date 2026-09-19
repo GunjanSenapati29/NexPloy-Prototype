@@ -1,22 +1,11 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { useIsMobile } from "@/hooks/useIsMobile";
 import { roleDescription } from "@/components/layout/nav-config";
 import type { ConstellationRole } from "@/components/three/RoleConstellation";
 
-const RoleConstellation = dynamic(() => import("@/components/three/RoleConstellation"), {
-  ssr: false,
-  loading: () => null,
-});
-
-/** Static stand-in for mobile / reduced-motion / while the R3F chunk
- * loads — the same clickable avatar-card grid the hub used before going
- * 3D, so the page is never a blank gap and stays fully usable without
- * WebGL. */
+/** The login hub's role picker — a clickable avatar-card grid. */
 function ConstellationFallback({ roles }: { roles: ConstellationRole[] }) {
   return (
     <div className="grid w-full grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
@@ -44,23 +33,13 @@ function ConstellationFallback({ roles }: { roles: ConstellationRole[] }) {
 }
 
 /**
- * Gated mount point for the login hub's 3D role picker — mirrors
- * NetworkCanvas.tsx's pattern: only mounts the R3F canvas on capable,
- * motion-enabled desktop viewports; everywhere else (mobile, reduced
- * motion, or while the chunk is still loading) it renders the same
- * choice as a static, fully clickable 2D grid.
+ * Login hub's role picker. Was a mounted R3F constellation on capable
+ * desktop viewports; reverted to always using the flat clickable card
+ * grid per direct design feedback — the 3D scene didn't hold up well
+ * at wide viewports (too much dead space, nodes small and off-center).
+ * The 3D scene component is kept unused rather than deleted in case we
+ * revisit it, but this entry point no longer mounts it.
  */
 export function RoleConstellationCanvas({ roles }: { roles: ConstellationRole[] }) {
-  const reduced = useReducedMotion();
-  const isMobile = useIsMobile();
-
-  if (reduced || isMobile) {
-    return <ConstellationFallback roles={roles} />;
-  }
-
-  return (
-    <div className="relative h-[480px] w-full">
-      <RoleConstellation roles={roles} />
-    </div>
-  );
+  return <ConstellationFallback roles={roles} />;
 }

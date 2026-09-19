@@ -11,6 +11,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/layout/Logo";
 import { RoleSignatureCanvas } from "@/components/three/RoleSignatureCanvas";
+import { StudentTwinCompact, StudentTwinVisual } from "@/components/login/StudentTwinVisual";
+import { RecruiterFlowCompact, RecruiterFlowVisual } from "@/components/login/RecruiterFlowVisual";
+import { OfficerLoopCompact, OfficerLoopVisual } from "@/components/login/OfficerLoopVisual";
+import { MentorJourneyCompact, MentorJourneyVisual } from "@/components/login/MentorJourneyVisual";
+import { AdminInsightCompact, AdminInsightVisual } from "@/components/login/AdminInsightVisual";
 import { useAppStore } from "@/hooks/useAppStore";
 import type { Role } from "@/types";
 import {
@@ -97,7 +102,7 @@ function RoleLoginForm({ role }: { role: Role }) {
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
-          className="max-w-md"
+          className={role === "student" || role === "recruiter" || role === "officer" || role === "mentor" || role === "admin" ? "w-full max-w-xl" : "max-w-md"}
         >
           <motion.p
             variants={staggerItem}
@@ -109,9 +114,56 @@ function RoleLoginForm({ role }: { role: Role }) {
             {roleTagline[role]}
           </motion.h1>
 
-          <motion.div variants={staggerItem} className="relative mt-4 h-[320px] w-full">
-            <RoleSignatureCanvas Icon={Icon} label={roleLabel[role]} signals={signals} />
-          </motion.div>
+          {role === "student" ? (
+            <>
+              <motion.p variants={staggerItem} className="mt-2 text-sm text-muted-foreground">
+                A complete view of you. A clearer path ahead.
+              </motion.p>
+              <div className="mt-6 w-full">
+                <StudentTwinVisual />
+              </div>
+            </>
+          ) : role === "recruiter" ? (
+            <>
+              <motion.p variants={staggerItem} className="mt-2 text-sm text-muted-foreground">
+                Smarter matching. Stronger teams.
+              </motion.p>
+              <div className="mt-8 w-full">
+                <RecruiterFlowVisual />
+              </div>
+            </>
+          ) : role === "officer" ? (
+            <>
+              <motion.p variants={staggerItem} className="mt-2 text-sm text-muted-foreground">
+                Plan. Execute. Monitor. Improve.
+              </motion.p>
+              <div className="mt-8 w-full">
+                <OfficerLoopVisual />
+              </div>
+            </>
+          ) : role === "mentor" ? (
+            <>
+              <motion.p variants={staggerItem} className="mt-2 text-sm text-muted-foreground">
+                Guide early. Intervene intelligently. Track progress.
+              </motion.p>
+              <div className="mt-8 w-full">
+                <MentorJourneyVisual />
+              </div>
+            </>
+          ) : role === "admin" ? (
+            <>
+              <motion.p variants={staggerItem} className="mt-2 text-sm text-muted-foreground">
+                Real-time insights. Better outcomes.
+              </motion.p>
+              <div className="mt-6 w-full">
+                <AdminInsightVisual />
+              </div>
+            </>
+          ) : (
+            <motion.div variants={staggerItem} className="relative mt-4 h-[320px] w-full">
+              <RoleSignatureCanvas Icon={Icon} label={roleLabel[role]} signals={signals} />
+            </motion.div>
+          )}
         </motion.div>
 
         <p className="text-xs text-muted-foreground/60">
@@ -134,6 +186,14 @@ function RoleLoginForm({ role }: { role: Role }) {
               All roles
             </Link>
           </motion.div>
+
+          {(role === "student" || role === "recruiter" || role === "officer" || role === "mentor" || role === "admin") && (
+            <motion.div variants={staggerItem} className="mb-8 lg:hidden">
+              <p className="text-xs font-medium uppercase tracking-wider text-violet-bright">{roleLabel[role]}</p>
+              <h1 className="mb-4 mt-1 text-2xl font-semibold leading-tight tracking-tight">{roleTagline[role]}</h1>
+              {role === "student" ? <StudentTwinCompact /> : role === "recruiter" ? <RecruiterFlowCompact /> : role === "officer" ? <OfficerLoopCompact /> : role === "mentor" ? <MentorJourneyCompact /> : <AdminInsightCompact />}
+            </motion.div>
+          )}
 
           <motion.div variants={staggerItem} className="flex items-center gap-3">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-violet/30 bg-violet/10 text-violet-bright">
