@@ -81,7 +81,7 @@ const config: Config = {
       boxShadow: {
         glow: "0 0 0 1px hsl(var(--violet) / 0.25), 0 8px 30px -8px hsl(var(--violet) / 0.35)",
         "glow-strong": "0 0 0 1px hsl(var(--violet) / 0.4), 0 12px 48px -8px hsl(var(--violet) / 0.55)",
-        card: "0 1px 0 0 hsl(0 0% 100% / 0.04) inset, 0 12px 32px -12px hsl(0 0% 0% / 0.6)",
+        card: "0 1px 0 0 hsl(var(--shadow-card-highlight)) inset, 0 12px 32px -12px hsl(var(--shadow-card-ambient))",
       },
       keyframes: {
         "accordion-down": { from: { height: "0" }, to: { height: "var(--radix-accordion-content-height)" } },

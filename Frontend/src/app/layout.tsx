@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ToastBridge } from "@/components/layout/ToastBridge";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { MotionProvider } from "@/components/providers/MotionProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,15 +32,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} font-sans antialiased`}>
-        <MotionProvider>
-          <TooltipProvider delayDuration={200}>
-            {children}
-            <ToastBridge />
-            <Toaster />
-          </TooltipProvider>
-        </MotionProvider>
+        <ThemeProvider>
+          <MotionProvider>
+            <TooltipProvider delayDuration={200}>
+              {children}
+              <ToastBridge />
+              <Toaster />
+            </TooltipProvider>
+          </MotionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

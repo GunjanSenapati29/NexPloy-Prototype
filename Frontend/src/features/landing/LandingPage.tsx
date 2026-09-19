@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useTheme } from "next-themes";
 import {
   ArrowRight,
   PlayCircle,
@@ -22,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { LazyShaderBackground as ShaderBackground } from "@/components/ui/lazy-shader-background";
 import { Logo } from "@/components/layout/Logo";
 import { DemoDataBadge } from "@/components/layout/DemoDataBadge";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { useAnimatedNumber } from "@/hooks/useAnimatedNumber";
 import { DepthCard } from "@/components/intelligence/DepthCard";
 import { PlacementIntelligenceCore, PlacementIntelligenceCompact } from "@/components/landing/PlacementIntelligenceCore";
@@ -135,6 +137,10 @@ function CountUp({ value, suffix = "" }: { value: number; suffix?: string }) {
 
 export function LandingPage() {
   const [watchOpen, setWatchOpen] = useState(false);
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const shaderVariant = mounted && resolvedTheme === "light" ? "light" : "dark";
 
   return (
     <div className="min-h-screen bg-background">
@@ -150,6 +156,7 @@ export function LandingPage() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <Button asChild variant="ghost" size="sm">
               <Link href="/login">Login</Link>
             </Button>
@@ -165,7 +172,7 @@ export function LandingPage() {
       {/* Hero */}
       <section id="platform" className="relative overflow-hidden">
         <div className="relative min-h-[640px] overflow-hidden">
-          <ShaderBackground className="absolute inset-0" />
+          <ShaderBackground className="absolute inset-0" variant={shaderVariant} />
           <div className="relative z-10">
             <div className="container grid gap-12 py-16 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:py-20">
               <motion.div initial="hidden" animate="visible" variants={staggerContainer}>

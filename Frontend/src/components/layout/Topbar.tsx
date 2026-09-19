@@ -16,6 +16,7 @@ import {
 import { RoleSwitcher } from "@/components/layout/RoleSwitcher";
 import { CampusSwitcher } from "@/components/layout/CampusSwitcher";
 import { NotificationsPanel } from "@/components/layout/NotificationsPanel";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { SidebarNav } from "@/components/layout/Sidebar";
 import { useAppStore } from "@/hooks/useAppStore";
 import { useRole } from "@/hooks/useRole";
@@ -89,6 +90,7 @@ export function Topbar() {
       <div className="ml-auto flex items-center gap-1.5">
         <CampusSwitcher />
         <RoleSwitcher />
+        <ThemeToggle />
         <NotificationsPanel />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

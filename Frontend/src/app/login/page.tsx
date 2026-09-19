@@ -1,9 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
+import { useTheme } from "next-themes";
 import { Logo } from "@/components/layout/Logo";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { LazyShaderBackground as ShaderBackground } from "@/components/ui/lazy-shader-background";
 import { RoleSelector } from "@/components/login/RoleSelector";
 import { fadeUp } from "@/lib/motion-variants";
@@ -14,9 +17,14 @@ import { fadeUp } from "@/lib/motion-variants";
  * (/login/[role]) instead of a single shared form with a role switch.
  */
 export default function LoginHubPage() {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const shaderVariant = mounted && resolvedTheme === "light" ? "light" : "dark";
+
   return (
     <div className="relative min-h-screen overflow-hidden">
-      <ShaderBackground className="absolute inset-0" />
+      <ShaderBackground className="absolute inset-0" variant={shaderVariant} />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background" />
 
       <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 py-8 sm:px-10">
@@ -24,12 +32,15 @@ export default function LoginHubPage() {
           <Link href="/">
             <Logo />
           </Link>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" /> Back to home
-          </Link>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" /> Back to home
+            </Link>
+          </div>
         </div>
 
         <div className="flex flex-1 flex-col items-center justify-center py-8 text-center">

@@ -45,7 +45,61 @@
     --violet: 262 83% 58%;
     --violet-bright: 264 100% 68%;
 
+    /* Card shadow pieces, split into variables so light mode can swap them
+       independently of the color tokens above — see :root.light. */
+    --shadow-card-highlight: 0 0% 100% / 0.04;
+    --shadow-card-ambient: 0 0% 0% / 0.6;
+
     --radius: 0.75rem;
+  }
+
+  /* Light mode — opt-in via ThemeToggle (next-themes adds this class to
+     <html>). Dark, defined above on :root, stays the unconditional
+     default so nothing changes for anyone who never touches the toggle. */
+  :root.light {
+    --background: 250 40% 98%;
+    --foreground: 240 25% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 25% 12%;
+
+    --elevated: 240 30% 99%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 25% 12%;
+
+    --primary: 262 83% 58%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 240 20% 94%;
+    --secondary-foreground: 240 25% 15%;
+
+    --muted: 240 20% 95%;
+    --muted-foreground: 240 10% 42%;
+
+    --accent: 240 25% 92%;
+    --accent-foreground: 240 25% 15%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 240 20% 88%;
+    --input: 240 20% 88%;
+    --ring: 262 83% 58%;
+
+    --success: 142 65% 38%;
+    --success-foreground: 210 40% 98%;
+    --warning: 38 92% 45%;
+    --warning-foreground: 240 25% 12%;
+    --risk: 0 72% 51%;
+    --risk-foreground: 210 40% 98%;
+
+    --violet-soft: 263 70% 50%;
+    --violet: 262 83% 58%;
+    --violet-bright: 264 90% 55%;
+
+    --shadow-card-highlight: 0 0% 100% / 0;
+    --shadow-card-ambient: 240 25% 25% / 0.1;
   }
 }
 
@@ -55,6 +109,9 @@
   }
   html {
     color-scheme: dark;
+  }
+  html.light {
+    color-scheme: light;
   }
   body {
     @apply bg-background text-foreground;

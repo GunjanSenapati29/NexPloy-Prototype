@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/layout/Logo";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { RoleSignatureCanvas } from "@/components/three/RoleSignatureCanvas";
 import { StudentTwinCompact, StudentTwinVisual } from "@/components/login/StudentTwinVisual";
 import { RecruiterFlowCompact, RecruiterFlowVisual } from "@/components/login/RecruiterFlowVisual";
@@ -89,12 +90,15 @@ function RoleLoginForm({ role }: { role: Role }) {
           <Link href="/">
             <Logo />
           </Link>
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" /> All roles
-          </Link>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" /> All roles
+            </Link>
+          </div>
         </div>
 
         <motion.div
@@ -182,9 +186,12 @@ function RoleLoginForm({ role }: { role: Role }) {
         >
           <motion.div variants={staggerItem} className="mb-8 flex items-center justify-between lg:hidden">
             <Logo />
-            <Link href="/login" className="text-xs text-muted-foreground hover:text-foreground">
-              All roles
-            </Link>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <Link href="/login" className="text-xs text-muted-foreground hover:text-foreground">
+                All roles
+              </Link>
+            </div>
           </motion.div>
 
           {(role === "student" || role === "recruiter" || role === "officer" || role === "mentor" || role === "admin") && (

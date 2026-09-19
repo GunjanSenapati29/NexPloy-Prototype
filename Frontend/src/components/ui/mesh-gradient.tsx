@@ -261,17 +261,34 @@ void main() {
 // NEXPLOY palette: bg #07070A, violet #7C3AED, bright violet #9D5CFF,
 // soft violet #6D28D9 — no pink/amber, restrained grain/intensity per the
 // "dark placement intelligence system" brief (no neon, no excess motion).
+const DARK_COLORS: [number, number, number][] = [
+  [0.027, 0.027, 0.039],
+  [0.486, 0.231, 0.937],
+  [0.616, 0.361, 1.0],
+  [0.427, 0.157, 0.847],
+  [0.427, 0.157, 0.847],
+  [0.427, 0.157, 0.847],
+  [0.427, 0.157, 0.847],
+  [0.427, 0.157, 0.847],
+];
+
+// Light mode: same violets, blended into a near-white base instead of
+// near-black — the shader averages colors by distance-weighted influence
+// (see shade() below), so a light base plus the same accent hues reads as
+// soft violet clouds fading into white rather than glow blobs on black.
+const LIGHT_COLORS: [number, number, number][] = [
+  [0.961, 0.953, 1.0],
+  [0.635, 0.502, 0.988],
+  [0.741, 0.643, 0.996],
+  [0.827, 0.769, 0.988],
+  [0.827, 0.769, 0.988],
+  [0.827, 0.769, 0.988],
+  [0.827, 0.769, 0.988],
+  [0.827, 0.769, 0.988],
+];
+
 const UNIFORMS = {
-  colors: [
-    [0.027, 0.027, 0.039],
-    [0.486, 0.231, 0.937],
-    [0.616, 0.361, 1.0],
-    [0.427, 0.157, 0.847],
-    [0.427, 0.157, 0.847],
-    [0.427, 0.157, 0.847],
-    [0.427, 0.157, 0.847],
-    [0.427, 0.157, 0.847],
-  ] as [number, number, number][],
+  colors: DARK_COLORS,
   colorCount: 4,
   scale: 1.260,
   intensity: 0.250,
@@ -300,12 +317,20 @@ const UNIFORMS = {
 
 const pendingContextReleases = new WeakMap<HTMLCanvasElement, number>()
 
-export function ShaderBackground({ className }: { className?: string }) {
+export function ShaderBackground({
+  className,
+  variant = "dark",
+}: {
+  className?: string
+  /** Which palette to render — swap when the person toggles light/dark. */
+  variant?: "dark" | "light"
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
+    const paletteColors = variant === "light" ? LIGHT_COLORS : DARK_COLORS
     const pendingRelease = pendingContextReleases.get(canvas)
     if (pendingRelease !== undefined) window.clearTimeout(pendingRelease)
     pendingContextReleases.delete(canvas)
@@ -349,7 +374,7 @@ export function ShaderBackground({ className }: { className?: string }) {
       space: gl.getUniformLocation(program, "u_space"),
       cursor: gl.getUniformLocation(program, "u_cursor"),
     }
-    gl.uniform3fv(uni.colors, new Float32Array(UNIFORMS.colors.flat()))
+    gl.uniform3fv(uni.colors, new Float32Array(paletteColors.flat()))
     gl.uniform4f(
       uni.shape,
       UNIFORMS.scale,
@@ -577,7 +602,7 @@ export function ShaderBackground({ className }: { className?: string }) {
       }, 0)
       pendingContextReleases.set(canvas, releaseTimer)
     }
-  }, [])
+  }, [variant])
 
   return (
     <canvas ref={canvasRef} className={className} style={{ display: "block", width: "100%", height: "100%" }} />
